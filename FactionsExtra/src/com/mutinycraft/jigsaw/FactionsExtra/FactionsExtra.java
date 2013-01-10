@@ -179,7 +179,7 @@ public class FactionsExtra extends JavaPlugin implements Listener{
 	}
 	
 	/***************** Disable *****************/
-	public void onDispable(){
+	public void onDisable(){
 		log.info(this.getName() + VERSION + " disabled!");
 	}
 }
