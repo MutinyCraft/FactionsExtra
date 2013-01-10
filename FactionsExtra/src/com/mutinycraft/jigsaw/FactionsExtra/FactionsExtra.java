@@ -31,6 +31,7 @@ public class FactionsExtra extends JavaPlugin implements Listener{
 	
 	/***************** Enable *****************/
 	
+	@Override
 	public void onEnable(){
 		log = this.getLogger();
 		
