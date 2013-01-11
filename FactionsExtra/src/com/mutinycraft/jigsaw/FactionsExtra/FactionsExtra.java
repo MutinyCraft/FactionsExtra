@@ -52,6 +52,7 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 
 		cmdExecutor = new FactionsExtraCommandExecutor(this);
 		getCommand("factionscore").setExecutor(cmdExecutor);
+		getCommand("factiontier").setExecutor(cmdExecutor);
 
 		log.info(this.getName() + VERSION + " enabled!");
 	}

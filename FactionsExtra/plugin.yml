@@ -10,3 +10,7 @@ commands:
    factionscore:
       description: Main command.
       usage: /factionscore [Faction Name]
+      
+   factiontier:
+      description: Main command.
+      usage: /factiontier [Faction Name] [Tier]
