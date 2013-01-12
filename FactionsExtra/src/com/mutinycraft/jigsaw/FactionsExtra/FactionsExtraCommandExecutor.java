@@ -69,7 +69,12 @@ public class FactionsExtraCommandExecutor implements CommandExecutor {
 
 	private void commandFactionTier(CommandSender sender, String factionName,
 			String tierString) {
-		int tier = Integer.valueOf(tierString);
+		int tier = -1;
+		try {
+			tier = Integer.valueOf(tierString);
+		} catch (Exception e) {
+			tier = -1;
+		}
 		if (tier == 0 || tier == 1 || tier == 2) {
 			try {
 				Faction f = Factions.i.getByTag(factionName);
