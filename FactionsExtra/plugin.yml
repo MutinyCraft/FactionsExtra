@@ -8,9 +8,16 @@ depend: [Factions]
 
 commands:
    factionscore:
+      aliases: fscore
       description: Main command.
       usage: /factionscore [Faction Name]
       
    factiontier:
+      aliases: ftier
+      description: Main command.
+      usage: /factiontier [Faction Name] [Tier]
+      
+   factiontop:
+      aliases: ftop
       description: Main command.
       usage: /factiontier [Faction Name] [Tier]

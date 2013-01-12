@@ -42,7 +42,7 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 			factionFile = new File(getDataFolder(), "FactionScores.yml");
 			firstRun();
 			// Get Factions
-			// getFactionsFromFile();
+			getFactionsFromFile();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -53,6 +53,7 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 		cmdExecutor = new FactionsExtraCommandExecutor(this);
 		getCommand("factionscore").setExecutor(cmdExecutor);
 		getCommand("factiontier").setExecutor(cmdExecutor);
+		getCommand("factiontop").setExecutor(cmdExecutor);
 
 		log.info(this.getName() + VERSION + " enabled!");
 	}
@@ -161,7 +162,6 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 			this.getLogger().log(Level.SEVERE,
 					"Could not save data to " + factionFile, ex);
 		}
-
 	}
 
 	// This should only be called one time when the plugin is first ran.

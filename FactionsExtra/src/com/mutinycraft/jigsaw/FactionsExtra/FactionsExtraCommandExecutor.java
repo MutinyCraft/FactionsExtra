@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import com.massivecraft.factions.Faction;
 import com.massivecraft.factions.Factions;
@@ -21,7 +22,14 @@ public class FactionsExtraCommandExecutor implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
 			String[] args) {
+		boolean pSender = sender instanceof Player;
 		if (cmd.getName().equalsIgnoreCase("factionscore")) {
+			// Check permissions first
+			if (pSender && !sender.hasPermission("factionsextra.score")) {
+				sender.sendMessage(ChatColor.RED
+						+ "You do not have permission to do this!");
+				return true;
+			}
 			if (args.length == 1) {
 				commandFactionScore(sender, args[0]);
 				return true;
@@ -32,6 +40,12 @@ public class FactionsExtraCommandExecutor implements CommandExecutor {
 			}
 		}
 		if (cmd.getName().equalsIgnoreCase("factiontier")) {
+			// Check permissions first
+			if (pSender && !sender.hasPermission("factionsextra.tier")) {
+				sender.sendMessage(ChatColor.RED
+						+ "You do not have permission to do this!");
+				return true;
+			}
 			if (args.length == 2) {
 				commandFactionTier(sender, args[0], args[1]);
 				return true;
