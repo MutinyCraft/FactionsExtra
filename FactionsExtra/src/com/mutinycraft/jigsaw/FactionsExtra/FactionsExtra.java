@@ -33,27 +33,22 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 
 	@Override
 	public void onEnable() {
+		factionData = new YamlConfiguration();
+		cmdExecutor = new FactionsExtraCommandExecutor(this);
 		log = this.getLogger();
-
-		getServer().getPluginManager().registerEvents(this, this);
-		new FactionsExtraEventHandler(this);
 
 		try {
 			factionFile = new File(getDataFolder(), "FactionScores.yml");
 			firstRun();
-			// Get Factions
-			getFactionsFromFile();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		factionData = new YamlConfiguration();
+		
+		getServer().getPluginManager().registerEvents(this, this);
+		new FactionsExtraEventHandler(this);
 		loadYamls();
-
-		cmdExecutor = new FactionsExtraCommandExecutor(this);
 		getCommand("factionscore").setExecutor(cmdExecutor);
 		getCommand("factiontier").setExecutor(cmdExecutor);
-		getCommand("factiontop").setExecutor(cmdExecutor);
 
 		log.info(this.getName() + VERSION + " enabled!");
 	}
@@ -62,6 +57,8 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 		if (!factionFile.exists()) {
 			factionFile.getParentFile().mkdirs();
 			copy(getResource("FactionScores.yml"), factionFile);
+			// Get Factions
+			getFactionsFromFile();
 		}
 	}
 
@@ -143,8 +140,8 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 			List<Integer> data = new ArrayList<Integer>(1);
 			// Default score of 0
 			data.add(0);
-			// Default tier of 1
-			data.add(1);
+			// Default tier of 0
+			data.add(0);
 			updateFaction(factionID, data);
 		}
 	}
@@ -173,8 +170,8 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 			List<Integer> data = new ArrayList<Integer>(1);
 			// Default score of 0
 			data.add(0);
-			// Default tier of 1
-			data.add(1);
+			// Default tier of 0
+			data.add(0);
 			updateFaction(Factions.i.getByTag(factionName).getId(), data);
 		}
 	}
