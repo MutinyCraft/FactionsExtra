@@ -16,8 +16,3 @@ commands:
       aliases: ftier
       description: Main command.
       usage: /factiontier [Faction Name] [Tier]
-      
-   factiontop:
-      aliases: ftop
-      description: Main command.
-      usage: /factiontier [Faction Name] [Tier]
