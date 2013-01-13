@@ -179,7 +179,7 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 		// Get the top 10 and put them into a string.
 		for (int i = 0; (i < 10 && i < factions.size()); i++) {
 			top.append(i + 1);
-			top.append(". Faction Name: ");
+			top.append(". Faction: ");
 			top.append(factions.get(i).getFactionName());
 			top.append(" Score: ");
 			top.append(factions.get(i).getScore());
