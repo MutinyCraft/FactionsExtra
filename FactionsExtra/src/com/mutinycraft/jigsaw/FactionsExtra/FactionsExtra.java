@@ -14,6 +14,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
@@ -29,6 +30,7 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 	FileConfiguration factionData;
 
 	private FactionsExtraCommandExecutor cmdExecutor;
+	private String topFactions;
 	private static final String VERSION = " v1.0";
 
 	/***************** Enable *****************/
@@ -49,6 +51,7 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 		getServer().getPluginManager().registerEvents(this, this);
 		new FactionsExtraEventHandler(this);
 		loadYamls();
+		setTopFactions();
 		getCommand("factionscore").setExecutor(cmdExecutor);
 		getCommand("factiontier").setExecutor(cmdExecutor);
 		getCommand("factiontop").setExecutor(cmdExecutor);
@@ -162,9 +165,12 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 			this.getLogger().log(Level.SEVERE,
 					"Could not save data to " + factionFile, ex);
 		}
+
+		// If a faction is updated we need to update the top factions.
+		setTopFactions();
 	}
 
-	public String getTopFactions() {
+	public void setTopFactions() {
 		Vector<Faction> factions = new Vector<Faction>(50);
 		Set<String> factionTags = P.p.getFactionTags();
 		StringBuilder top = new StringBuilder();
@@ -173,20 +179,33 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 		while (iter.hasNext()) {
 			String factionName = iter.next();
 			String factionID = Factions.i.getByTag(factionName).getId();
-			factions.add(new Faction(factionName, getFactionScore(factionID)));
+			factions.add(new Faction(factionName, getFactionScore(factionID),
+					getFactionTier(factionID)));
 		}
 		Collections.sort(factions);
 		// Get the top 10 and put them into a string.
 		for (int i = 0; (i < 10 && i < factions.size()); i++) {
+			top.append(ChatColor.GREEN);
 			top.append(i + 1);
 			top.append(". Faction: ");
+			top.append(ChatColor.RED);
 			top.append(factions.get(i).getFactionName());
+			top.append(ChatColor.GREEN);
 			top.append(" Score: ");
+			top.append(ChatColor.RED);
 			top.append(factions.get(i).getScore());
+			top.append(ChatColor.GREEN);
+			top.append(" Tier: ");
+			top.append(ChatColor.RED);
+			top.append(factions.get(i).getTier());
 			top.append("\n");
 		}
 
-		return top.toString();
+		this.topFactions = top.toString();
+	}
+
+	public String getTopFactions() {
+		return this.topFactions;
 	}
 
 	// This should only be called one time when the plugin is first ran.
