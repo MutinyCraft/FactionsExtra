@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,12 +45,13 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		getServer().getPluginManager().registerEvents(this, this);
 		new FactionsExtraEventHandler(this);
 		loadYamls();
 		getCommand("factionscore").setExecutor(cmdExecutor);
 		getCommand("factiontier").setExecutor(cmdExecutor);
+		getCommand("factiontop").setExecutor(cmdExecutor);
 
 		log.info(this.getName() + VERSION + " enabled!");
 	}
@@ -159,6 +162,31 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 			this.getLogger().log(Level.SEVERE,
 					"Could not save data to " + factionFile, ex);
 		}
+	}
+
+	public String getTopFactions() {
+		Vector<Faction> factions = new Vector<Faction>(50);
+		Set<String> factionTags = P.p.getFactionTags();
+		StringBuilder top = new StringBuilder();
+
+		Iterator<String> iter = factionTags.iterator();
+		while (iter.hasNext()) {
+			String factionName = iter.next();
+			String factionID = Factions.i.getByTag(factionName).getId();
+			factions.add(new Faction(factionName, getFactionScore(factionID)));
+		}
+		Collections.sort(factions);
+		// Get the top 10 and put them into a string.
+		for (int i = 0; (i < 10 && i < factions.size()); i++) {
+			top.append(i + 1);
+			top.append(". Faction Name: ");
+			top.append(factions.get(i).getFactionName());
+			top.append(" Score: ");
+			top.append(factions.get(i).getScore());
+			top.append("\n");
+		}
+
+		return top.toString();
 	}
 
 	// This should only be called one time when the plugin is first ran.

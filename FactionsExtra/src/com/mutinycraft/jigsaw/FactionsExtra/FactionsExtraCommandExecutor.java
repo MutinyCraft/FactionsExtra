@@ -55,6 +55,18 @@ public class FactionsExtraCommandExecutor implements CommandExecutor {
 				return true;
 			}
 		}
+
+		if (cmd.getName().equalsIgnoreCase("factiontop")) {
+			// Check permissions first
+			if (pSender && !sender.hasPermission("factionsextra.top")) {
+				sender.sendMessage(ChatColor.RED
+						+ "You do not have permission to do this!");
+				return true;
+			} else {
+				sender.sendMessage(ChatColor.GREEN + plugin.getTopFactions());
+				return true;
+			}
+		}
 		return false;
 	}
 

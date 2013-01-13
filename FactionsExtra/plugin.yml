@@ -14,5 +14,10 @@ commands:
       
    factiontier:
       aliases: ftier
-      description: Main command.
+      description: Change the tier of a faction.
       usage: /factiontier [Faction Name] [Tier]
+      
+   factiontop:
+      aliases: ftop
+      description: List of top 10 factions.
+      usage: /factiontop
