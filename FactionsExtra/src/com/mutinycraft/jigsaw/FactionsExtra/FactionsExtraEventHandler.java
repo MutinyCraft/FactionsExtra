@@ -107,23 +107,48 @@ public class FactionsExtraEventHandler implements Listener {
 			// Get Ally/Neutral/Enemy relationship
 			if (killedF.getRelationTo(killerF).isEnemy()) {
 				// Record data to file
-				if (getFactionTier(killerF.getId()) == 1) {
-					if (getFactionTier(killedF.getId()) == 1) {
+				switch(getFactionTier(killerF.getId())){
+				case 1:
+					switch(getFactionTier(killedF.getId())){
+					case 1:
 						addScore(killerF.getId(), POINT_PER_KILL_1_1);
 						messageKill(killerFP.getPlayer(), POINT_PER_KILL_1_1);
-					} else if (getFactionTier(killedF.getId()) == 2) {
+						break;
+					case 2:
 						addScore(killerFP.getId(), POINT_PER_KILL_1_2);
 						messageKill(killerFP.getPlayer(), POINT_PER_KILL_1_2);
 					}
-				} else if (getFactionTier(killerF.getId()) == 2) {
-					if (getFactionTier(killedF.getId()) == 1) {
+					break;
+				case 2:
+					switch(getFactionTier(killedF.getId())){
+					case 1:
 						addScore(killerF.getId(), POINT_PER_KILL_2_1);
 						messageKill(killerFP.getPlayer(), POINT_PER_KILL_2_1);
-					} else if (getFactionTier(killedF.getId()) == 2) {
+						break;
+					case 2:
 						addScore(killerF.getId(), POINT_PER_KILL_2_2);
 						messageKill(killerFP.getPlayer(), POINT_PER_KILL_2_2);
+						break;
 					}
+					break;
 				}
+//				if (getFactionTier(killerF.getId()) == 1) {
+//					if (getFactionTier(killedF.getId()) == 1) {
+//						addScore(killerF.getId(), POINT_PER_KILL_1_1);
+//						messageKill(killerFP.getPlayer(), POINT_PER_KILL_1_1);
+//					} else if (getFactionTier(killedF.getId()) == 2) {
+//						addScore(killerFP.getId(), POINT_PER_KILL_1_2);
+//						messageKill(killerFP.getPlayer(), POINT_PER_KILL_1_2);
+//					}
+//				} else if (getFactionTier(killerF.getId()) == 2) {
+//					if (getFactionTier(killedF.getId()) == 1) {
+//						addScore(killerF.getId(), POINT_PER_KILL_2_1);
+//						messageKill(killerFP.getPlayer(), POINT_PER_KILL_2_1);
+//					} else if (getFactionTier(killedF.getId()) == 2) {
+//						addScore(killerF.getId(), POINT_PER_KILL_2_2);
+//						messageKill(killerFP.getPlayer(), POINT_PER_KILL_2_2);
+//					}
+//				}
 				recordDataInFile(killedFP.getNameAndTag() + " was killed by "
 						+ killerFP.getNameAndTag());
 			}
