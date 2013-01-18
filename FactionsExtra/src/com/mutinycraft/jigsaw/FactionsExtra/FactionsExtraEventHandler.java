@@ -47,7 +47,8 @@ public class FactionsExtraEventHandler implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void playerDeath(PlayerDeathEvent event) {
-
+		
+		long start = System.currentTimeMillis();
 		if (event.getEntity() instanceof Player) {
 			Player killed = (Player) event.getEntity();
 			if (killed.getKiller() instanceof Player) {
@@ -57,6 +58,8 @@ public class FactionsExtraEventHandler implements Listener {
 				}
 			}
 		}
+		long end = System.currentTimeMillis();
+		plugin.log.info("Debug: PlayerDeathEvent took " + (end-start) + "ms to finish.");
 	}
 
 	@EventHandler
