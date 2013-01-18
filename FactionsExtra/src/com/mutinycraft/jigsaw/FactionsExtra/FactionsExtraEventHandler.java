@@ -96,28 +96,28 @@ public class FactionsExtraEventHandler implements Listener {
 	private void factionKillHandling(Player killed, Player killer) {
 		FPlayer killedFP = FPlayers.i.get(killed);
 		FPlayer killerFP = FPlayers.i.get(killer);
+		Faction killedF = killedFP.getFaction();
+		Faction killerF = killerFP.getFaction();
 
 		// Check to make sure this is not a Peaceful Faction
-		if (!killedFP.getFaction().isPeaceful()
-				&& !killerFP.getFaction().isPeaceful()) {
+		if (!killedF.isPeaceful() && !killerFP.getFaction().isPeaceful()) {
 			// Get Ally/Neutral/Enemy relationship
-			if (killedFP.getFaction().getRelationTo(killerFP.getFaction())
-					.isEnemy()) {
+			if (killedF.getRelationTo(killerF).isEnemy()) {
 				// Record data to file
-				if (getFactionTier(killerFP.getFactionId()) == 1) {
-					if (getFactionTier(killedFP.getFactionId()) == 1) {
-						addScore(killerFP.getFactionId(), POINT_PER_KILL_1_1);
+				if (getFactionTier(killerF.getId()) == 1) {
+					if (getFactionTier(killedF.getId()) == 1) {
+						addScore(killerF.getId(), POINT_PER_KILL_1_1);
 						messageKill(killerFP.getPlayer(), POINT_PER_KILL_1_1);
-					} else if (getFactionTier(killedFP.getFactionId()) == 2) {
-						addScore(killerFP.getFactionId(), POINT_PER_KILL_1_2);
+					} else if (getFactionTier(killedF.getId()) == 2) {
+						addScore(killerFP.getId(), POINT_PER_KILL_1_2);
 						messageKill(killerFP.getPlayer(), POINT_PER_KILL_1_2);
 					}
-				} else if (getFactionTier(killerFP.getFactionId()) == 2) {
-					if (getFactionTier(killedFP.getFactionId()) == 1) {
-						addScore(killerFP.getFactionId(), POINT_PER_KILL_2_1);
+				} else if (getFactionTier(killerF.getId()) == 2) {
+					if (getFactionTier(killedF.getId()) == 1) {
+						addScore(killerF.getId(), POINT_PER_KILL_2_1);
 						messageKill(killerFP.getPlayer(), POINT_PER_KILL_2_1);
-					} else if (getFactionTier(killedFP.getFactionId()) == 2) {
-						addScore(killerFP.getFactionId(), POINT_PER_KILL_2_2);
+					} else if (getFactionTier(killedF.getId()) == 2) {
+						addScore(killerF.getId(), POINT_PER_KILL_2_2);
 						messageKill(killerFP.getPlayer(), POINT_PER_KILL_2_2);
 					}
 				}
