@@ -103,7 +103,7 @@ public class FactionsExtraEventHandler implements Listener {
 		Faction killerF = killerFP.getFaction();
 
 		// Check to make sure this is not a Peaceful Faction
-		if (!killedF.isPeaceful() && !killerFP.getFaction().isPeaceful()) {
+		if (!killedF.isPeaceful() && !killerF.isPeaceful()) {
 			// Get Ally/Neutral/Enemy relationship
 			if (killedF.getRelationTo(killerF).isEnemy()) {
 				// Record data to file
