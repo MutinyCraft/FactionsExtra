@@ -47,7 +47,7 @@ public class FactionsExtraEventHandler implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void playerDeath(PlayerDeathEvent event) {
-		
+
 		long start = System.currentTimeMillis();
 		if (event.getEntity() instanceof Player) {
 			Player killed = (Player) event.getEntity();
@@ -59,7 +59,8 @@ public class FactionsExtraEventHandler implements Listener {
 			}
 		}
 		long end = System.currentTimeMillis();
-		plugin.log.info("Debug: PlayerDeathEvent took " + (end-start) + "ms to finish.");
+		plugin.log.info("Debug: PlayerDeathEvent took " + (end - start)
+				+ "ms to finish.");
 	}
 
 	@EventHandler
@@ -101,32 +102,29 @@ public class FactionsExtraEventHandler implements Listener {
 		FPlayer killerFP = FPlayers.i.get(killer);
 		Faction killedF = killedFP.getFaction();
 		Faction killerF = killerFP.getFaction();
-
-		// Check to make sure this is not a Peaceful Faction
-		if (!killedF.isPeaceful() && !killerF.isPeaceful()) {
-			// Get Ally/Neutral/Enemy relationship
-			if (killedF.getRelationTo(killerF).isEnemy()) {
-				// Record data to file
-				if (getFactionTier(killerF.getId()) == 1) {
-					if (getFactionTier(killedF.getId()) == 1) {
-						addScore(killerF.getId(), POINT_PER_KILL_1_1);
-						messageKill(killerFP.getPlayer(), POINT_PER_KILL_1_1);
-					} else if (getFactionTier(killedF.getId()) == 2) {
-						addScore(killerFP.getId(), POINT_PER_KILL_1_2);
-						messageKill(killerFP.getPlayer(), POINT_PER_KILL_1_2);
-					}
-				} else if (getFactionTier(killerF.getId()) == 2) {
-					if (getFactionTier(killedF.getId()) == 1) {
-						addScore(killerF.getId(), POINT_PER_KILL_2_1);
-						messageKill(killerFP.getPlayer(), POINT_PER_KILL_2_1);
-					} else if (getFactionTier(killedF.getId()) == 2) {
-						addScore(killerF.getId(), POINT_PER_KILL_2_2);
-						messageKill(killerFP.getPlayer(), POINT_PER_KILL_2_2);
-					}
+		
+		// Get Ally/Neutral/Enemy relationship
+		if (killedF.getRelationTo(killerF).isEnemy()) {
+			// Record data to file
+			if (getFactionTier(killerF.getId()) == 1) {
+				if (getFactionTier(killedF.getId()) == 1) {
+					addScore(killerF.getId(), POINT_PER_KILL_1_1);
+					messageKill(killerFP.getPlayer(), POINT_PER_KILL_1_1);
+				} else if (getFactionTier(killedF.getId()) == 2) {
+					addScore(killerFP.getId(), POINT_PER_KILL_1_2);
+					messageKill(killerFP.getPlayer(), POINT_PER_KILL_1_2);
 				}
-				recordDataInFile(killedFP.getNameAndTag() + " was killed by "
-						+ killerFP.getNameAndTag());
+			} else if (getFactionTier(killerF.getId()) == 2) {
+				if (getFactionTier(killedF.getId()) == 1) {
+					addScore(killerF.getId(), POINT_PER_KILL_2_1);
+					messageKill(killerFP.getPlayer(), POINT_PER_KILL_2_1);
+				} else if (getFactionTier(killedF.getId()) == 2) {
+					addScore(killerF.getId(), POINT_PER_KILL_2_2);
+					messageKill(killerFP.getPlayer(), POINT_PER_KILL_2_2);
+				}
 			}
+			recordDataInFile(killedFP.getNameAndTag() + " was killed by "
+					+ killerFP.getNameAndTag());
 		}
 	}
 
