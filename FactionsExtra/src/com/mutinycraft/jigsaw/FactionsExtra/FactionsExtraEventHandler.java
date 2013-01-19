@@ -102,7 +102,7 @@ public class FactionsExtraEventHandler implements Listener {
 		FPlayer killerFP = FPlayers.i.get(killer);
 		Faction killedF = killedFP.getFaction();
 		Faction killerF = killerFP.getFaction();
-		
+
 		// Get Ally/Neutral/Enemy relationship
 		if (killedF.getRelationTo(killerF).isEnemy()) {
 			// Record data to file
