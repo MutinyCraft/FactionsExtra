@@ -63,25 +63,22 @@ public class FactionsExtraEventHandler implements Listener {
 		}
 	}
 
-	// Events
+	// Kill Event
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void playerDeath(PlayerDeathEvent event) {
 
-		long start = System.currentTimeMillis();
-		if (event.getEntity() instanceof Player) {
-			Player killed = (Player) event.getEntity();
-			if (killed.getKiller() instanceof Player) {
-				Player killer = killed.getKiller();
-				if (killer.getWorld().getName().equalsIgnoreCase(FACTION_WORLD)) {
-					factionKillHandling(killed, killer);
+		if(event.getEntity().getWorld().getName().equalsIgnoreCase(FACTION_WORLD)){
+			if (event.getEntity() instanceof Player) {
+				Player killed = (Player) event.getEntity();
+				if (killed.getKiller() instanceof Player) {
+					factionKillHandling(killed, (Player) killed.getKiller());
 				}
 			}
 		}
-		long end = System.currentTimeMillis();
-		plugin.log.info("Debug: PlayerDeathEvent took " + (end - start)
-				+ "ms to finish.");
 	}
+	
+	// Claim Event
 
 	@EventHandler
 	public void landClaim(LandClaimEvent event) {
