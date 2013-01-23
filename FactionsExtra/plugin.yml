@@ -1,10 +1,10 @@
 name: FactionsExtra
 main: com.mutinycraft.jigsaw.FactionsExtra.FactionsExtra
-version: 1.0
+version: 1.2
 author: Jigsaw
 description: Extra features added to work alongside the Factions plugin.
 
-depend: [Factions]
+depend: [Factions, TagAPI]
 
 commands:
    factionscore:
