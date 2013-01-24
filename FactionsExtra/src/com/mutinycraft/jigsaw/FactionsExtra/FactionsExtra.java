@@ -31,7 +31,7 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 
 	private FactionsExtraCommandExecutor cmdExecutor;
 	private String topFactions;
-	private static final String VERSION = " v1.0";
+	private static final String VERSION = " v1.1";
 
 	/***************** Enable *****************/
 

@@ -1,11 +1,5 @@
 package com.mutinycraft.jigsaw.FactionsExtra;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -68,7 +62,8 @@ public class FactionsExtraEventHandler implements Listener {
 	@EventHandler(priority = EventPriority.LOW)
 	public void playerDeath(PlayerDeathEvent event) {
 
-		if(event.getEntity().getWorld().getName().equalsIgnoreCase(FACTION_WORLD)){
+		if (event.getEntity().getWorld().getName()
+				.equalsIgnoreCase(FACTION_WORLD)) {
 			if (event.getEntity() instanceof Player) {
 				Player killed = (Player) event.getEntity();
 				if (killed.getKiller() instanceof Player) {
@@ -77,7 +72,7 @@ public class FactionsExtraEventHandler implements Listener {
 			}
 		}
 	}
-	
+
 	// Claim Event
 
 	@EventHandler
@@ -103,7 +98,7 @@ public class FactionsExtraEventHandler implements Listener {
 					messageClaim(claimingFP.getPlayer(), POINT_PER_CLAIM_2_2);
 				}
 			}
-			recordDataInFile(claimingFP.getNameAndTag() + " claimed land from "
+			plugin.log.info(claimingFP.getNameAndTag() + " claimed land from "
 					+ claimedFrom.getTag());
 		}
 	}
@@ -140,7 +135,7 @@ public class FactionsExtraEventHandler implements Listener {
 					messageKill(killerFP.getPlayer(), POINT_PER_KILL_2_2);
 				}
 			}
-			recordDataInFile(killedFP.getNameAndTag() + " was killed by "
+			plugin.log.info(killedFP.getNameAndTag() + " was killed by "
 					+ killerFP.getNameAndTag());
 		}
 	}
@@ -156,20 +151,6 @@ public class FactionsExtraEventHandler implements Listener {
 
 	private int getFactionTier(String factionID) {
 		return plugin.getFactionTier(factionID);
-	}
-
-	private void recordDataInFile(String msg) {
-		try {
-			File dataFile = new File(plugin.getDataFolder(), "data.txt");
-			PrintWriter out = new PrintWriter(new BufferedWriter(
-					new FileWriter(dataFile, true)));
-			out.println(msg);
-			out.close();
-		} catch (FileNotFoundException e) {
-			plugin.log.severe("That file does not exist! Please create it.");
-		} catch (IOException e) {
-			plugin.log.severe("Error saving to file!  Data is likely lost.");
-		}
 	}
 
 	private void messageKill(Player player, int points) {
