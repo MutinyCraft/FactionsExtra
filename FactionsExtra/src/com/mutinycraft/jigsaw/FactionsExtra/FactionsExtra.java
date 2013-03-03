@@ -20,7 +20,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import com.massivecraft.factions.Factions;
 import com.massivecraft.factions.P;
 
@@ -66,6 +65,9 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 		getCommand("factiontier").setExecutor(cmdExecutor);
 		getCommand("factiontop").setExecutor(cmdExecutor);
 		getCommand("factionreset").setExecutor(cmdExecutor);
+
+		new PlayerDataTask(this.getDataFolder())
+				.runTaskTimer(this, 1200, 72000);
 
 		log.info(this.getName() + VERSION + " enabled!");
 	}
