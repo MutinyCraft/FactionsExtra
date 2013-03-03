@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -16,6 +17,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.inventory.ItemStack;
+
 import com.massivecraft.factions.Board;
 import com.massivecraft.factions.FPlayer;
 import com.massivecraft.factions.FPlayers;
@@ -54,7 +57,8 @@ public class FactionsExtraEventHandler implements Listener {
 			if (event.getEntity() instanceof Player) {
 				Player killed = (Player) event.getEntity();
 				if (killed.getKiller() instanceof Player) {
-					factionKillHandling(killed, (Player) killed.getKiller());
+					factionKillHandling(killed, (Player) killed.getKiller(),
+							event.getDrops());
 				}
 			}
 		}
@@ -96,7 +100,8 @@ public class FactionsExtraEventHandler implements Listener {
 		plugin.addFaction(factionID);
 	}
 
-	private void factionKillHandling(Player killed, Player killer) {
+	private void factionKillHandling(Player killed, Player killer,
+			List<ItemStack> drops) {
 		FPlayer killedFP = FPlayers.i.get(killed);
 		FPlayer killerFP = FPlayers.i.get(killer);
 		Faction killedF = killedFP.getFaction();
@@ -104,7 +109,7 @@ public class FactionsExtraEventHandler implements Listener {
 
 		// Get Ally/Neutral/Enemy relationship
 		if (killedF.getRelationTo(killerF).isEnemy()) {
-			if (validKillCheck(killed, killer)) {
+			if (killedHasArmor(drops) && validKillCheck(killed, killer)) {
 				if (getFactionTier(killerF.getId()) == 1) {
 					if (getFactionTier(killedF.getId()) == 1) {
 						addScore(killerF.getId(), POINT_PER_KILL_1_1);
@@ -126,9 +131,48 @@ public class FactionsExtraEventHandler implements Listener {
 						+ killerFP.getNameAndTag());
 			} else {
 				killer.sendMessage(ChatColor.RED
-						+ "Invalid kill: You have killed this player more than one time today!");
+						+ "Invalid kill: That player was not wearing armor or you have already killed them today!");
 			}
 		}
+	}
+
+	private boolean killedHasArmor(List<ItemStack> drops) {
+		int count = 0;
+		Iterator<ItemStack> iter = drops.iterator();
+		while (iter.hasNext() && count < 4) {
+			switch (iter.next().getType()) {
+			case DIAMOND_BOOTS:
+				count++;
+				break;
+			case DIAMOND_CHESTPLATE:
+				count++;
+				break;
+			case DIAMOND_HELMET:
+				count++;
+				break;
+			case DIAMOND_LEGGINGS:
+				count++;
+				break;
+			case IRON_BOOTS:
+				count++;
+				break;
+			case IRON_CHESTPLATE:
+				count++;
+				break;
+			case IRON_HELMET:
+				count++;
+				break;
+			case IRON_LEGGINGS:
+				count++;
+				break;
+			default:
+				break;
+			}
+		}
+		if(count >= 4){
+			return true;
+		}
+		return false;
 	}
 
 	private void addScore(String factionID, int score) {
