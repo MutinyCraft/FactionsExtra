@@ -126,7 +126,7 @@ public class FactionsExtraEventHandler implements Listener {
 						+ killerFP.getNameAndTag());
 			} else {
 				killer.sendMessage(ChatColor.RED
-						+ "Invalid kill: That player was not wearing armor or you have already killed them today!");
+						+ "Invalid kill: You may not kill the same player twice within 60 minutes!");
 			}
 		}
 	}
