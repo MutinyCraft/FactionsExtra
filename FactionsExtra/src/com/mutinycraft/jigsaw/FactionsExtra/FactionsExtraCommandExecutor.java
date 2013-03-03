@@ -67,6 +67,51 @@ public class FactionsExtraCommandExecutor implements CommandExecutor {
 				return true;
 			}
 		}
+
+		if (cmd.getName().equalsIgnoreCase("factionreset")) {
+			// Check permissions first
+			if (pSender && !sender.hasPermission("factionsextra.reset")) {
+				sender.sendMessage(ChatColor.RED
+						+ "You do not have permission to do this!");
+				return true;
+			}
+			if (args.length == 1 && args[0].equalsIgnoreCase("ALL")) {
+				commandFactionResetAll(sender);
+				sender.sendMessage(ChatColor.RED
+						+ "Reset the faction score of ALL factions.");
+				return true;
+			} else if (args.length == 1) {
+				if (commandFactionReset(sender, args[0])) {
+					sender.sendMessage(ChatColor.RED
+							+ "Reset the faction score of " + args[0]);
+				} else {
+					sender.sendMessage(ChatColor.RED + "The faction " + args[0]
+							+ " does not exist.");
+				}
+				return true;
+			} else {
+				sender.sendMessage(ChatColor.RED
+						+ "Usage: /factionreset [Faction Name]");
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void commandFactionResetAll(CommandSender sender) {
+		plugin.resetAllFactions();
+	}
+
+	private boolean commandFactionReset(CommandSender sender, String factionName) {
+		Faction f = Factions.i.getByTag(factionName);
+		if (f != null) {
+			List<Integer> data = plugin.getFactionData(f.getId());
+			// Set the score to 0
+			data.set(0, 0);
+			// Update the database
+			plugin.updateFaction(Factions.i.getByTag(factionName).getId(), data);
+			return true;
+		}
 		return false;
 	}
 

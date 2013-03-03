@@ -1,15 +1,21 @@
 package com.mutinycraft.jigsaw.FactionsExtra;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.kitteh.tag.PlayerReceiveNameTagEvent;
-
 import com.massivecraft.factions.Board;
 import com.massivecraft.factions.FPlayer;
 import com.massivecraft.factions.FPlayers;
@@ -36,25 +42,6 @@ public class FactionsExtraEventHandler implements Listener {
 	public FactionsExtraEventHandler(FactionsExtra pl) {
 		this.plugin = pl;
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-	}
-
-	// Tag Event
-
-	@EventHandler
-	public void factionTag(PlayerReceiveNameTagEvent event) {
-		FPlayer namedPlayer = FPlayers.i.get(event.getNamedPlayer());
-		FPlayer seeingPlayer = FPlayers.i.get(event.getPlayer());
-
-		if (namedPlayer.getFaction().isPeaceful()) {
-			event.setTag(ChatColor.GOLD + event.getNamedPlayer().getName());
-		} else if (namedPlayer.getRelationTo(seeingPlayer).isEnemy()) {
-			event.setTag(ChatColor.RED + event.getNamedPlayer().getName());
-		} else if (namedPlayer.getRelationTo(seeingPlayer).isAlly()) {
-			event.setTag(ChatColor.DARK_GREEN
-					+ event.getNamedPlayer().getName());
-		} else if (namedPlayer.getRelationTo(seeingPlayer).isMember()) {
-			event.setTag(ChatColor.GREEN + event.getNamedPlayer().getName());
-		}
 	}
 
 	// Kill Event
@@ -98,7 +85,7 @@ public class FactionsExtraEventHandler implements Listener {
 					messageClaim(claimingFP.getPlayer(), POINT_PER_CLAIM_2_2);
 				}
 			}
-			plugin.log.info(claimingFP.getNameAndTag() + " claimed land from "
+			recordDataInFile(claimingFP.getNameAndTag() + " claimed land from "
 					+ claimedFrom.getTag());
 		}
 	}
@@ -117,26 +104,30 @@ public class FactionsExtraEventHandler implements Listener {
 
 		// Get Ally/Neutral/Enemy relationship
 		if (killedF.getRelationTo(killerF).isEnemy()) {
-			// Record data to file
-			if (getFactionTier(killerF.getId()) == 1) {
-				if (getFactionTier(killedF.getId()) == 1) {
-					addScore(killerF.getId(), POINT_PER_KILL_1_1);
-					messageKill(killerFP.getPlayer(), POINT_PER_KILL_1_1);
-				} else if (getFactionTier(killedF.getId()) == 2) {
-					addScore(killerFP.getId(), POINT_PER_KILL_1_2);
-					messageKill(killerFP.getPlayer(), POINT_PER_KILL_1_2);
+			if (validKillCheck(killed, killer)) {
+				if (getFactionTier(killerF.getId()) == 1) {
+					if (getFactionTier(killedF.getId()) == 1) {
+						addScore(killerF.getId(), POINT_PER_KILL_1_1);
+						messageKill(killerFP.getPlayer(), POINT_PER_KILL_1_1);
+					} else if (getFactionTier(killedF.getId()) == 2) {
+						addScore(killerF.getId(), POINT_PER_KILL_1_2);
+						messageKill(killerFP.getPlayer(), POINT_PER_KILL_1_2);
+					}
+				} else if (getFactionTier(killerF.getId()) == 2) {
+					if (getFactionTier(killedF.getId()) == 1) {
+						addScore(killerF.getId(), POINT_PER_KILL_2_1);
+						messageKill(killerFP.getPlayer(), POINT_PER_KILL_2_1);
+					} else if (getFactionTier(killedF.getId()) == 2) {
+						addScore(killerF.getId(), POINT_PER_KILL_2_2);
+						messageKill(killerFP.getPlayer(), POINT_PER_KILL_2_2);
+					}
 				}
-			} else if (getFactionTier(killerF.getId()) == 2) {
-				if (getFactionTier(killedF.getId()) == 1) {
-					addScore(killerF.getId(), POINT_PER_KILL_2_1);
-					messageKill(killerFP.getPlayer(), POINT_PER_KILL_2_1);
-				} else if (getFactionTier(killedF.getId()) == 2) {
-					addScore(killerF.getId(), POINT_PER_KILL_2_2);
-					messageKill(killerFP.getPlayer(), POINT_PER_KILL_2_2);
-				}
+				recordDataInFile(killedFP.getNameAndTag() + " was killed by "
+						+ killerFP.getNameAndTag());
+			} else {
+				killer.sendMessage(ChatColor.RED
+						+ "Invalid kill: You have killed this player more than one time today!");
 			}
-			plugin.log.info(killedFP.getNameAndTag() + " was killed by "
-					+ killerFP.getNameAndTag());
 		}
 	}
 
@@ -163,6 +154,52 @@ public class FactionsExtraEventHandler implements Listener {
 		player.sendMessage(ChatColor.GREEN
 				+ "You claimed land from an enemy faction and earned " + points
 				+ " points!");
+	}
+
+	private boolean validKillCheck(Player killed, Player killer) {
+		boolean validKill = true;
+		FileConfiguration config = null;
+		File file = new File(plugin.getDataFolder() + File.separator + "users"
+				+ File.separator + killer.getName() + ".yml");
+		try {
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			config = YamlConfiguration.loadConfiguration(file);
+			List<String> kills = config.getStringList("kills");
+			if (kills.contains(killed.getName())) {
+				validKill = false;
+			} else {
+				kills.add(killed.getName());
+			}
+			config.set("kills", kills);
+			config.save(file);
+		} catch (FileNotFoundException e) {
+			plugin.log.severe("That file does not exist! Please create it.");
+
+		} catch (IOException e) {
+			plugin.log.severe("Error saving to file!  Data is likely lost.");
+
+		}
+		return validKill;
+	}
+
+	private void recordDataInFile(String msg) {
+		try {
+			File dataFile = new File(plugin.getDataFolder(), "data.txt");
+			PrintWriter out = new PrintWriter(new BufferedWriter(
+					new FileWriter(dataFile, true)));
+			out.println(msg);
+			out.close();
+
+		} catch (FileNotFoundException e) {
+			plugin.log.severe("That file does not exist! Please create it.");
+
+		} catch (IOException e) {
+			plugin.log.severe("Error saving to file!  Data is likely lost.");
+
+		}
+
 	}
 
 }

@@ -14,6 +14,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -31,7 +32,7 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 
 	private FactionsExtraCommandExecutor cmdExecutor;
 	private String topFactions;
-	private static final String VERSION = " v1.1";
+	private static final String VERSION = " v1.3";
 
 	/***************** Enable *****************/
 
@@ -50,11 +51,21 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 
 		getServer().getPluginManager().registerEvents(this, this);
 		new FactionsExtraEventHandler(this);
+
+		if (Bukkit.getServer().getPluginManager().getPlugin("TagAPI") != null) {
+			new FactionsExtraTagEventHandler(this);
+			log.info("Succesfully hooked into TagAPI.");
+		} else {
+			log.info("TagAPI was not found!");
+			log.info("Disabling support for colored tags!");
+		}
+
 		loadYamls();
 		setTopFactions();
 		getCommand("factionscore").setExecutor(cmdExecutor);
 		getCommand("factiontier").setExecutor(cmdExecutor);
 		getCommand("factiontop").setExecutor(cmdExecutor);
+		getCommand("factionreset").setExecutor(cmdExecutor);
 
 		log.info(this.getName() + VERSION + " enabled!");
 	}
@@ -206,6 +217,20 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 
 	public String getTopFactions() {
 		return this.topFactions;
+	}
+
+	public void resetAllFactions() {
+		Set<String> factions = P.p.getFactionTags();
+		Iterator<String> iter = factions.iterator();
+		while (iter.hasNext()) {
+			String factionName = iter.next();
+			List<Integer> data = new ArrayList<Integer>(1);
+			// Default score of 0
+			data.add(0);
+			// Default tier of 0
+			data.add(0);
+			updateFaction(Factions.i.getByTag(factionName).getId(), data);
+		}
 	}
 
 	// This should only be called one time when the plugin is first ran.
