@@ -192,8 +192,10 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 		while (iter.hasNext()) {
 			String factionName = iter.next();
 			String factionID = Factions.i.getByTag(factionName).getId();
-			factions.add(new Faction(factionName, getFactionScore(factionID),
-					getFactionTier(factionID)));
+			if (getFactionTier(factionID) != 0) {
+				factions.add(new Faction(factionName,
+						getFactionScore(factionID), getFactionTier(factionID)));
+			}
 		}
 		Collections.sort(factions);
 		// Get the top 10 and put them into a string.
@@ -218,6 +220,9 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 	}
 
 	public String getTopFactions() {
+		if (topFactions.length() == 0) {
+			return "There are no Factions with a score greater than 0";
+		}
 		return this.topFactions;
 	}
 
