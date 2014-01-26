@@ -53,7 +53,7 @@ public class FactionsExtra extends JavaPlugin implements Listener {
 
 		if (Bukkit.getServer().getPluginManager().getPlugin("TagAPI") != null) {
 			new FactionsExtraTagEventHandler(this);
-			log.info("Succesfully hooked into TagAPI.");
+			log.info("Successfully hooked into TagAPI.");
 		} else {
 			log.info("TagAPI was not found!");
 			log.info("Disabling support for colored tags!");
